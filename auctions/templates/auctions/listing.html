@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+        <h2>Listing: {{listing.Title}}</h2>
+        
+        <form action="{% url 'addWatchlist' listing.id %}" method="post" id="watchlist_form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-dark p-s py-0 my-3">Watchlist</button>
+        </form>
+        
+        <div  class="row">
+            <img src="{{listing.imgLinks}}" alt="{{listing.Title}} image" style="max-height: 24em; max-width: 100%; margin-left: 1em" >
+        </div>
+        
+        <p>{{listing.description}}</p>
+        <h2>${{listing.startingBid}}</h2>
+        
+        <form action="{% url "bidding" listing.id %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input class="btn btn-primary" type="submit" value="Place Bid">
+        </form>
+        
+        <h3>Details</h3>
+        
+        <ul>
+            <li>Listed by:<strong> {{listing.user}}</strong></li>
+            <li>Category: No Category Listed</li>
+        </ul>
+{% endblock %}

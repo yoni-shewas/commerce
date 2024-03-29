@@ -1,12 +1,16 @@
 from importlib.resources import contents
+from logging import PlaceHolder
+from multiprocessing import Value
 from django.contrib.auth import authenticate, login, logout
-from .models import AuctionListing
+from .models import AuctionListing, Bids
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
 
 from .models import User
 
@@ -95,6 +99,29 @@ class AuctionItemForm(forms.ModelForm):
         max_length=200, required=True, label="Image Links")
 
 
+class BidForm(forms.ModelForm):
+    class Meta:
+        model = Bids
+        fields = ['bid']
+
+    def __init__(self, *args, **kwargs):
+        initial_values = kwargs.pop('initial_values', None)
+        super(BidForm, self).__init__(*args, **kwargs)
+
+        if initial_values:
+            for field_name, value in initial_values.items():
+                if field_name in self.fields:
+                    self.fields[field_name].widget.attrs.update(
+                        {'placeholder': 'Enter Bid', 'class': 'form-control'})
+                    Label = str(value) + \
+                        ' bid(s) so far, Your bid is the current bid'
+                    self.fields[field_name].label = Label
+            for field_name, field in self.fields.items():
+                self.fields[field_name].widget.attrs['placeholder'] = "Enter Bid"
+
+    bid = forms.IntegerField(required=True)
+
+
 @login_required
 def create_Listing(request):
 
@@ -108,9 +135,52 @@ def create_Listing(request):
                                  startingBid=price,
                                  imgLinks=imageLink, user=user)
         listing.save()
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("listing", args=[listing.id]))
     else:
         form = AuctionItemForm()
         return render(request, "auctions/createListing.html", {
             "form": form,
         })
+
+
+@login_required
+def listing_page(request, id):
+    listing = get_object_or_404(AuctionListing, id=id)
+    bids = Bids.objects.filter(listing=listing)
+    bid_count = bids.count()
+
+    initial_data = {'bid': bid_count}
+    form = BidForm(initial_values=initial_data)
+
+    return render(request, "auctions/listing.html", {
+        "listing": listing,
+        "form": form,
+    })
+
+
+@login_required
+def bidding(request, id):
+    listing = get_object_or_404(AuctionListing, id=id)
+
+    if request.method == "POST":
+        form = BidForm(request.POST)
+        print(request.POST)
+        if form.is_valid():
+            bid = form.save(commit=False)
+            bid.listing = listing
+            bid.user = request.user
+            bid.save()
+            return HttpResponseRedirect(reverse("listing", args=[id]))
+        else:
+            try:
+                form.clean_bid()
+            except ValidationError as e:
+                return HttpResponseBadRequest(e.message)
+    else:
+        # Redirect to the listing page if the request method is not POST
+        return HttpResponseRedirect(reverse("listing", args=[id]))
+
+
+@login_required
+def add_watchlist(request, id):
+    pass
