@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    {% for content in contents %}
+        <div class="border d-flex flex-wrap my-4" style="overflow-y: hidden;">
+            <img class="col-md-4 px-5" style="max-height: 18em; max-width: 100%;" src="{{ content.imgLinks }}" alt="auction item">
+            <div class="col-md-8 p-3 flex-grow-1">
+                <h3>{{ content.Title }}</h3>
+                <p><strong>Price:</strong> ${{ content.startingBid }}</p>
+                <p>{{ content.description }}</p>
+            </div>
+        </div>
+    {% endfor %}
+
+    <h5><a href="{% url "create-Listing" %}">Create Listing</a></h5>
+{% endblock %}
