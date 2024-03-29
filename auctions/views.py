@@ -2,7 +2,7 @@ from importlib.resources import contents
 from logging import PlaceHolder
 from multiprocessing import Value
 from django.contrib.auth import authenticate, login, logout
-from .models import AuctionListing, Bids
+from .models import AuctionListing, Bids, WatchListing
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
@@ -183,4 +183,23 @@ def bidding(request, id):
 
 @login_required
 def add_watchlist(request, id):
-    pass
+    listing = get_object_or_404(AuctionListing, id=id)
+
+    if request.method == "POST":
+        try:
+            # Use get() to directly retrieve the WatchListing object
+            isWatchlisted = WatchListing.objects.get(listing=listing)
+
+            # Update the object if it exists
+            if isWatchlisted.isWatchlisted:
+                isWatchlisted.isWatchlisted = False
+            else:
+                isWatchlisted.isWatchlisted = True
+            isWatchlisted.save()
+        except WatchListing.DoesNotExist:
+            # Create a new WatchListing object if it doesn't exist
+            watchlisted = WatchListing(
+                user=request.user, isWatchlisted=True, listing=listing)
+            watchlisted.save()
+
+        return HttpResponseRedirect(reverse("listing", args=[id]))
