@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from . import views
 
@@ -18,6 +20,6 @@ urlpatterns = [
     path('category/<str:category>/', views.watchCategory, name='category'),
     path('category/', views.watchCategory, name='category'),
 
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 handler404 = 'auctions.views.error_404'
