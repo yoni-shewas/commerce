@@ -1,15 +1,20 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Watchlist Listed</h2>
-    {% for content in contents %}
-        <div class="border d-flex flex-wrap my-4" style="overflow-y: hidden;">
-            <img class="col-md-4 px-5" style="max-height: 16.5em; max-width: 100%;" src="{{ content.listing.imgLinks }}" alt="auction item">
-            <div class="col-md-8 p-3 flex-grow-1">
-                <h3> <a href="{% url 'listing' content.listing.id %}"> {{ content.listing.Title }}   </a></h3>
-                <p><strong>Price:</strong> ${{ content.listing.startingBid }}</p>
-                <p>{{ content.listing.description }}</p>
+    <div class="container mt-4">
+        <h2>Watchlist Listed</h2>
+        {% for content in contents %}
+            <div class="border d-flex flex-wrap my-4" style="overflow-y: hidden; max-height: 15em;">
+                <div class="col-md-4 px-5" style="flex: 0 0 50%;">
+                    <img class="img-fluid" style="max-width: 100%; height: auto;" src="{{ content.listing.imgLinks }}" alt="auction item">
+                </div>
+                <div class="col-md-8 p-3 flex-grow-1">
+                    <h3 class="m-1 p-0"> <a href="{% url 'listing' content.listing.id %}"> {{ content.Title }}   </a></h3>
+                    <p class="m-1 p-0"><strong>Price:</strong> ${{ content.listing.startingBid }}</p>
+                    <p class="m-1 p-0">{{ content.listing.description }}</p>
+                    <p class="m-1 p-0 text-secondary font-weight-light">Created {{ content.listing.formatted_datListed }}</p>
+                </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
 {% endblock %}

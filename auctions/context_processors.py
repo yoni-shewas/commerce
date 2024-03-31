@@ -1,8 +1,15 @@
+from django.contrib.auth.decorators import login_required
+from .models import AuctionListing, Bids, WatchListing, bidWinner, comments
+
+
+@login_required
 def custom_context(request):
-    # Define your custom data here
+    lists = WatchListing.objects.filter(user=request.user)
+    if not lists:
+        watchlistCount = 0
+    else:
+        watchlistCount = lists.count()
     custom_data = {
-        'key1': 'value1',
-        'key2': 'value2',
-        # Add more key-value pairs as needed
+        'watchlistCount': watchlistCount,
     }
     return custom_data

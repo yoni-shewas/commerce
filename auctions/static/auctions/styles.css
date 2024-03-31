@@ -1,9 +1,69 @@
+
 body {
-    padding: 3em;
-    background-color: black;
+    background-color: #f8f9fa; 
+    color: #212529;
+}
+.navbar {
+    background-color: #343a40; 
+}
+.navbar-brand {
+    color: #fff; 
+    font-weight: bold;
+}
+.nav-link {
+    color: #fff; 
+}
+.nav-link:hover {
+    color: #ccc; 
+}
+.badge {
+    background-color: #6c757d; 
+    color: #fff;
 }
 
 .row{
     display: flex;
     flex-wrap: wrap;
+}
+
+.bg-gray {
+    background-color: #d3d2d2;
+}
+
+.category-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.category-item {
+    width: 300px;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+.category-item:hover {
+    transform: scale(1.05);
+}
+.category-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.image-container {
+    width: auto;
+    max-height: 200px; /* Set maximum height for the image container */
+    overflow: hidden;
+}
+
+.card-img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block; /* Ensure the image is treated as a block-level element */
 }

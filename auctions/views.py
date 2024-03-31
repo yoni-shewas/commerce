@@ -2,6 +2,7 @@ from datetime import timezone
 from importlib.resources import contents
 from logging import PlaceHolder
 from multiprocessing import Value
+from unicodedata import category
 from django.contrib.auth import authenticate, login, logout
 from .models import AuctionListing, Bids, WatchListing, bidWinner, comments
 from django.contrib.auth.decorators import login_required
@@ -18,7 +19,7 @@ from .models import User
 
 
 def index(request):
-    contents = AuctionListing.objects.all()
+    contents = AuctionListing.objects.filter(active=True)
 
     return render(request, "auctions/index.html", {
         "contents": contents,
@@ -78,9 +79,20 @@ def register(request):
 
 
 class AuctionItemForm(forms.ModelForm):
+
+    catagories = (
+        ('Electronics', 'Electronics'),
+        ('Fashion', 'Fashion'),
+        ('Home & Garden', 'Home & Garden'),
+        ('Collectibles & Art', 'Collectibles & Art'),
+        ('Sports & Outdoors', 'Sports & Outdoors'),
+        ('Books, Music & Media', 'Books, Music & Media'),
+    )
+
     class Meta:
         model = AuctionListing
-        fields = ['Title', 'description', 'startingBid', 'imgLinks']
+        fields = ['Title', 'description',
+                  'startingBid', 'imgLinks', 'category']
 
     def __init__(self, *args, **kwargs):
         super(AuctionItemForm, self).__init__(*args, **kwargs)
@@ -92,6 +104,8 @@ class AuctionItemForm(forms.ModelForm):
             {'placeholder': 'Enter Starting Bid', 'class': 'form-control', 'label': False})
         self.fields['imgLinks'].widget.attrs.update(
             {'placeholder': 'Enter Image Links', 'class': 'form-control', 'label': False})
+        self.fields['category'].widget.attrs.update(
+            {'placeholder': 'choose category', 'class': 'form-control', 'label': False})
 
     Title = forms.CharField(max_length=64, required=True, label='Title')
     description = forms.CharField(
@@ -99,6 +113,8 @@ class AuctionItemForm(forms.ModelForm):
     startingBid = forms.IntegerField(required=True, label="Starting Bid")
     imgLinks = forms.CharField(
         max_length=200, required=True, label="Image Links")
+    category = forms.ChoiceField(
+        choices=catagories, required=True, label="Category")
 
 
 class BidForm(forms.ModelForm):
@@ -331,3 +347,18 @@ def WatchList(request):
     return render(request, "auctions/watchlist.html", {
         "contents": lists,
     })
+
+
+def watchCategory(request, category=None):
+    if category is not None:
+        lists = AuctionListing.objects.filter(
+            category=category, active=True)
+        return render(request, "auctions/category.html", {
+            "contents": lists,
+            "category": category,
+        })
+    else:
+        return render(request, "auctions/category.html", {
+            "contents": [],
+            "category": None,
+        })

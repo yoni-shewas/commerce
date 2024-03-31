@@ -10,6 +10,15 @@ class User(AbstractUser):
 
 
 class AuctionListing(models.Model):
+
+    catagories = (
+        ('Electronics', 'Electronics'),
+        ('Fashion', 'Fashion'),
+        ('Home & Garden', 'Home & Garden'),
+        ('Collectibles & Art', 'Collectibles & Art'),
+        ('Sports & Outdoors', 'Sports & Outdoors'),
+        ('Books, Music & Media', 'Books, Music & Media'),
+    )
     id = models.BigAutoField(primary_key=True)
     Title = models.CharField(max_length=64)
     description = models.TextField()
@@ -18,7 +27,12 @@ class AuctionListing(models.Model):
     imgLinks = models.CharField(max_length=200)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="auction_listings")
-    # datListed = models.DateTimeField(auto_now_add=True)
+    category = models.CharField(
+        max_length=100, choices=catagories, null=True, default='Home & Garden')
+    datListed = models.DateTimeField(auto_now_add=True)
+
+    def formatted_datListed(self):
+        return self.datListed.strftime('%B %d, %Y %I:%M %p')
 
 
 class Bids(models.Model):

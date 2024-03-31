@@ -1,0 +1,69 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    
+    {% if category %}
+    <h2>{{category}}</h2>
+    {% for content in contents %}
+    <div class="border d-flex flex-wrap my-4" style="overflow-y: hidden; max-height: 15em;">
+        <div class="col-md-4 px-5" style="flex: 0 0 50%;">
+            <img class="img-fluid" style="max-width: 100%; height: auto;" src="{{ content.imgLinks }}" alt="auction item">
+        </div>
+        <div class="col-md-8 p-3 flex-grow-1">
+            <h3 class="m-1 p-0"> <a href="{% url 'listing' content.id %}"> {{ content.Title }}   </a></h3>
+            <p class="m-1 p-0"><strong>Price:</strong> ${{ content.startingBid }}</p>
+            <p class="m-1 p-0">{{ content.description }}</p>
+            <p class="m-1 p-0 text-secondary font-weight-light">Created {{ content.formatted_datListed }}</p>
+        </div>
+    </div>
+{% endfor %}
+    {% else %}
+    <div class="container">
+        <div class="category-container">
+            <div class="category-item">
+                    <img src="https://via.placeholder.com/200" alt="Electronics" class="category-image">
+                    <a href="{% url 'category' 'Electronics' %}">
+                        <h3>Electronics</h3>
+                    </a>
+                    <p>Explore our latest electronic gadgets and devices.</p>
+            </div>
+            <div class="category-item">
+                    <img src="https://via.placeholder.com/200" alt="Fashion" class="category-image">
+                    <a href="{% url 'category' 'Fashion' %}">
+                        <h3>Fashion</h3>
+                    </a>
+                    <p>Discover the trendiest fashion items for all occasions.</p>
+            </div>
+            <div class="category-item">
+                <img src="https://via.placeholder.com/200" alt="Fashion" class="category-image">
+                <a href="{% url 'category' 'Home & Garden' %}">
+                    <h3>Home & Garden</h3>
+                </a>
+                <p>Find that one thing you need that to fit into place.</p>
+            </div>
+            <div class="category-item">
+                <img src="https://via.placeholder.com/200" alt="Fashion" class="category-image">
+                <a href="{% url 'category' 'Collectibles & Art' %}">
+                    <h3>Collectibles & Art</h3>
+                </a>
+                <p>Find somthings you wouldn't find on current market</p>
+            </div>
+            <div class="category-item">
+                <img src="https://via.placeholder.com/200" alt="Fashion" class="category-image">
+                <a href="{% url 'category' 'Sports & Outdoors' %}">
+                    <h3>Sports & Outdoors</h3>
+                </a>
+                <p>Update your outdoor activities</p>
+            </div>
+            <div class="category-item">
+                <img src="https://via.placeholder.com/200" alt="Fashion" class="category-image">
+                <a href="{% url 'category' 'Books, Music & Media' %}">
+                    <h3>Books, Music & Media</h3>
+                </a>
+                <p>Find somthing to reflect on</p>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+{% endblock %}
