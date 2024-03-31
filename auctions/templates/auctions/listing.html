@@ -1,30 +1,92 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-        <h2>Listing: {{listing.Title}}</h2>
-        
+    <h2>Listing: {{ listing.Title }}</h2>
+    {% if user.id == listing.user.id %}
+        {% if listing.active %}
+            <form action="{% url 'closeAuction' listing.id %}" method="post" id="watchlist_form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger p-0 px-4 mt-3">Close Auction</button>
+            </form>
+        {% else %}
+            <button type="button" class="btn btn-secondary p-0 px-4 mt-3">Auction Closed</button>
+        {% endif %}
+    {% elif not listing.active %}
+        <button type="button" class="btn btn-secondary p-0 px-4 mt-3">Auction Closed</button>
+    {% endif %}
+   
+    {% if user.id != listing.user.id %}
+        {% if Watchlist.isWatchlisted  %}
+        <form action="{% url 'addWatchlist' listing.id %}" method="post" id="watchlist_form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success p-1 px-4 mt-3">Watchlisted</button>
+            </form>
+        {% else %}
         <form action="{% url 'addWatchlist' listing.id %}" method="post" id="watchlist_form">
             {% csrf_token %}
-            <button type="submit" class="btn btn-dark p-s py-0 my-3">Watchlist</button>
+            <button type="submit" class="btn btn-dark p-s py-0 my-3">Watchlist</button> 
         </form>
-        
-        <div  class="row">
-            <img src="{{listing.imgLinks}}" alt="{{listing.Title}} image" style="max-height: 24em; max-width: 100%; margin-left: 1em" >
-        </div>
-        
-        <p>{{listing.description}}</p>
-        <h2>${{listing.startingBid}}</h2>
-        
-        <form action="{% url "bidding" listing.id %}" method="post">
+        {% endif %}
+    {% endif %}
+    
+    <div class="row my-2">
+        <img src="{{ listing.imgLinks }}" alt="{{ listing.Title }} image" style="max-height: 24em; max-width: 100%; margin-left: 1em">
+    </div>
+    
+    <p>{{ listing.description }}</p>
+    <h2>${{ listing.startingBid }}</h2>
+
+    {% if bid_win is None and user.id != listing.user.id %}
+        <form action="{% url 'bidding' listing.id %}" method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <input class="btn btn-primary" type="submit" value="Place Bid">
         </form>
+    
+    {% elif user.id == listing.user.id and bid_win is None %}
+        <p>{{ bid_count }} bids have taken place</p>
+        <p>So far <strong>${{ max_bid }}</strong> is the Max Bid</p>
+
+    {% elif bid_win and user.id == listing.user.id %}
+        <p>Bidder <strong>{{ bid_win.bidWinner }}</strong> has won the bid</p> 
+
+    {% elif bid_win and bid_win.bidWinner.id == user.id %}
         
-        <h3>Details</h3>
+            <div class="row my-4">
+                <div class="col-md-5">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="card-title">🎉 Congratulations! 🎉</h3>
+                            <p class="card-text"><strong>{{ bid_win.bidWinner | capfirst }}!</strong> You have won the auction!</p>
+                            <p class="card-text">🎊🥳🎈</p>
+                            <a href="#" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         
-        <ul>
-            <li>Listed by:<strong> {{listing.user}}</strong></li>
-            <li>Category: No Category Listed</li>
-        </ul>
+    {% endif %}
+
+    <div class="comment-section p-0 m-0 my-3 col-md-3">
+        {% if commentList %}
+            {% for comment in commentList %}
+                <div class="comment">
+                    <p><strong>{{ comment.user }}</strong>: {{ comment.comment }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No comments yet.</p>
+        {% endif %}
+        <form action="{% url 'submitComment' listing.id %}" method="POST" id="comment_form">
+            {% csrf_token %}
+            {{ commentForm.as_p }}
+            <button type="submit" class="btn btn-primary mt-3">Comment</button>
+        </form>
+    </div>
+    <h3>Details</h3>
+    
+    <ul>
+        <li>Listed by: <strong>{{ listing.user }}</strong></li>
+        <li>Category: No Category Listed</li>
+    </ul>
 {% endblock %}

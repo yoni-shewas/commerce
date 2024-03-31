@@ -14,9 +14,11 @@ class AuctionListing(models.Model):
     Title = models.CharField(max_length=64)
     description = models.TextField()
     startingBid = models.IntegerField()
+    active = models.BooleanField(default=True)
     imgLinks = models.CharField(max_length=200)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="auction_listings")
+    # datListed = models.DateTimeField(auto_now_add=True)
 
 
 class Bids(models.Model):
@@ -25,7 +27,8 @@ class Bids(models.Model):
         User, on_delete=models.CASCADE, related_name="bids", default=None)
     bid = models.IntegerField(default=0)
     listing = models.ForeignKey(
-        AuctionListing, on_delete=models.CASCADE, related_name="bids", default=None)
+        AuctionListing, on_delete=models.CASCADE,
+        related_name="bids", default=None)
 
 
 class WatchListing(models.Model):
@@ -34,4 +37,27 @@ class WatchListing(models.Model):
         User, on_delete=models.CASCADE, related_name="watchlist", default=None)
     isWatchlisted = models.BooleanField(default=False)
     listing = models.ForeignKey(
-        AuctionListing, on_delete=models.CASCADE, related_name="watchlist", default=None)
+        AuctionListing, on_delete=models.CASCADE,
+        related_name="watchlist", default=None)
+
+
+class bidWinner(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    bidWinner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="bidWinner", default=None)
+    bidWon = models.ForeignKey(
+        AuctionListing, on_delete=models.CASCADE,
+        related_name="bidWinner", default=None)
+    winning_bid = models.DecimalField(max_digits=10, decimal_places=2)
+    date_won = models.DateTimeField(auto_now_add=True)
+
+
+class comments(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="comments", default=None)
+    comment = models.CharField(max_length=500)
+    listing = models.ForeignKey(
+        AuctionListing, on_delete=models.CASCADE,
+        related_name="comments", default=None)
+    datListed = models.DateTimeField(auto_now_add=True)

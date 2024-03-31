@@ -1,8 +1,9 @@
+from datetime import timezone
 from importlib.resources import contents
 from logging import PlaceHolder
 from multiprocessing import Value
 from django.contrib.auth import authenticate, login, logout
-from .models import AuctionListing, Bids, WatchListing
+from .models import AuctionListing, Bids, WatchListing, bidWinner, comments
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
@@ -11,6 +12,7 @@ from django.urls import reverse
 from django import forms
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from .models import User
 
@@ -103,9 +105,11 @@ class BidForm(forms.ModelForm):
     class Meta:
         model = Bids
         fields = ['bid']
+    bid = forms.IntegerField(required=True)
 
     def __init__(self, *args, **kwargs):
         initial_values = kwargs.pop('initial_values', None)
+        self.bid_constraint = kwargs.pop('bid_constraint', None)
         super(BidForm, self).__init__(*args, **kwargs)
 
         if initial_values:
@@ -119,7 +123,40 @@ class BidForm(forms.ModelForm):
             for field_name, field in self.fields.items():
                 self.fields[field_name].widget.attrs['placeholder'] = "Enter Bid"
 
-    bid = forms.IntegerField(required=True)
+    def clean_bid(self):
+        bid = self.cleaned_data.get("bid")
+
+        # Check if bid is empty
+        if bid is None:
+            raise forms.ValidationError('Bid cannot be empty')
+
+        # Add more constraints as needed
+        # For example, to check if bid is greater than bid_constraint
+        if self.bid_constraint is not None and bid <= self.bid_constraint:
+            raise forms.ValidationError(
+                f'Bid must be greater than {self.bid_constraint}')
+
+        return bid
+
+
+class commentForm(forms.ModelForm):
+    class Meta:
+        model = comments
+        fields = ['comment']
+
+    comment = forms.CharField(
+        widget=forms.Textarea(attrs={'maxlength': 500}),
+        required=True,
+        label="Comment"
+    )
+
+    def __init__(self, *args, **kwargs):
+        # Call parent class's __init__ method
+        super(commentForm, self).__init__(*args, **kwargs)
+        self.fields['comment'].widget.attrs.update(
+            {'placeholder': 'Enter your comment here',
+                'class': 'form-control', 'rows': 4}
+        )
 
 
 @login_required
@@ -146,16 +183,62 @@ def create_Listing(request):
 @login_required
 def listing_page(request, id):
     listing = get_object_or_404(AuctionListing, id=id)
+    user = request.user
     bids = Bids.objects.filter(listing=listing)
     bid_count = bids.count()
+    maxBids = bids.order_by('-bid').first()
 
-    initial_data = {'bid': bid_count}
-    form = BidForm(initial_values=initial_data)
+    commentF = commentForm()
+    commentList = comments.objects.filter(listing=listing)
 
-    return render(request, "auctions/listing.html", {
-        "listing": listing,
-        "form": form,
-    })
+    if maxBids is not None:
+        maxBid = maxBids.bid
+    else:
+        maxBid = 0
+    try:
+        bid_win = bidWinner.objects.get(bidWon=listing)
+    except bidWinner.DoesNotExist:
+        bid_win = None
+    if bid_win and bid_win.bidWinner.id == user.id:
+        return render(request, "auctions/listing.html", {
+            "listing": listing,
+            "user": user,
+            "bid_win": bid_win,
+            "bid_count": bid_count,
+            "max_bid": maxBid,
+            "commentForm": commentF,
+            "commentList": commentList,
+        })
+
+    else:
+        try:
+            # Use get() to directly retrieve the WatchListing object
+            Watchlist = WatchListing.objects.get(user=user, listing=listing)
+        except WatchListing.DoesNotExist:
+            # Create a new WatchListing object if it doesn't exist
+            watchlisted = WatchListing(
+                user=request.user, isWatchlisted=False, listing=listing)
+            watchlisted.save()
+            Watchlist = WatchListing.objects.get(user=user, listing=listing)
+
+        print(f"{maxBid} {maxBids}")
+        initial_data = {'bid': bid_count, }
+        starting_Bid = {'bid_constraint': int(listing.startingBid)}
+        form = BidForm(initial_values=initial_data,
+                       bid_constraint=starting_Bid)
+        print(Watchlist.isWatchlisted)
+
+        return render(request, "auctions/listing.html", {
+            "listing": listing,
+            "form": form,
+            "user": user,
+            "bid_win": bid_win,
+            "bid_count": bid_count,
+            "max_bid": maxBid,
+            "commentForm": commentF,
+            "commentList": commentList,
+            "Watchlist": Watchlist,
+        })
 
 
 @login_required
@@ -163,7 +246,7 @@ def bidding(request, id):
     listing = get_object_or_404(AuctionListing, id=id)
 
     if request.method == "POST":
-        form = BidForm(request.POST)
+        form = BidForm(request.POST, bid_constraint=listing.startingBid)
         print(request.POST)
         if form.is_valid():
             bid = form.save(commit=False)
@@ -171,14 +254,13 @@ def bidding(request, id):
             bid.user = request.user
             bid.save()
             return HttpResponseRedirect(reverse("listing", args=[id]))
-        else:
-            try:
-                form.clean_bid()
-            except ValidationError as e:
-                return HttpResponseBadRequest(e.message)
     else:
-        # Redirect to the listing page if the request method is not POST
-        return HttpResponseRedirect(reverse("listing", args=[id]))
+        form = BidForm(bid_constraint=listing.startingBid)
+
+    return render(request, "auctions/listing.html", {
+        "listing": listing,
+        "form": form,
+    })
 
 
 @login_required
@@ -188,14 +270,15 @@ def add_watchlist(request, id):
     if request.method == "POST":
         try:
             # Use get() to directly retrieve the WatchListing object
-            isWatchlisted = WatchListing.objects.get(listing=listing)
+            Watchliste = WatchListing.objects.get(
+                listing=listing, user=request.user)
 
             # Update the object if it exists
-            if isWatchlisted.isWatchlisted:
-                isWatchlisted.isWatchlisted = False
+            if Watchliste.isWatchlisted:
+                Watchliste.isWatchlisted = False
             else:
-                isWatchlisted.isWatchlisted = True
-            isWatchlisted.save()
+                Watchliste.isWatchlisted = True
+            Watchliste.save()
         except WatchListing.DoesNotExist:
             # Create a new WatchListing object if it doesn't exist
             watchlisted = WatchListing(
@@ -203,3 +286,48 @@ def add_watchlist(request, id):
             watchlisted.save()
 
         return HttpResponseRedirect(reverse("listing", args=[id]))
+
+
+@login_required
+def close_auction(request, id):
+    listing = get_object_or_404(AuctionListing, id=id)
+    bids = Bids.objects.filter(listing=listing)
+    if request.method == 'POST':
+        if listing.active:
+            listing.active = False
+            listing.save()
+            maxBidder = bids.order_by('-bid').first()
+            if maxBidder:
+                winning_bid = maxBidder.bid
+                bid_winner = bidWinner.objects.create(
+                    bidWinner=maxBidder.user,
+                    bidWon=listing,
+                    winning_bid=winning_bid,
+                )
+                bid_winner.save()
+
+        return HttpResponseRedirect(reverse("listing", args=[id]))
+
+
+@login_required
+def submit_comment(request, id):
+    listing = get_object_or_404(AuctionListing, id=id)
+
+    if request.method == 'POST':
+        form = commentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.listing = listing
+            comment.save()
+        print(form.is_valid())
+
+        return HttpResponseRedirect(reverse("listing", args=[id]))
+
+
+def WatchList(request):
+    lists = WatchListing.objects.filter(user=request.user)
+
+    return render(request, "auctions/watchlist.html", {
+        "contents": lists,
+    })
