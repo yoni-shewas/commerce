@@ -17,4 +17,7 @@ urlpatterns = [
     path('category/', views.watchCategory, name='categories'),
     path('category/<str:category>/', views.watchCategory, name='category'),
     path('category/', views.watchCategory, name='category'),
+
 ]
+
+handler404 = 'auctions.views.error_404'
