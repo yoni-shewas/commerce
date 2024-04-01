@@ -41,7 +41,6 @@ PyJWT==2.3.0
 pyparsing==2.4.7
 PyPDF2==3.0.1
 pypi==2.1
-python-apt==2.4.0+ubuntu3
 python-dotenv==1.0.1
 PyYAML==5.4.1
 requests==2.31.0
