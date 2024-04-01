@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
 load_dotenv()
 
@@ -152,3 +153,19 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 STATIC_ROOT = 'C:/Users/PC/Desktop/S-L/Python/commerce/auctions/static'
+
+
+DATABASES = {
+    "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
+}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'auction_db_yi52',
+#         'USER': 'auction_db_yi52_user',
+#         'PASSWORD': 'XbG9hJpVRHjlnBrfw4ZyVAkvoBrCzvsq',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
