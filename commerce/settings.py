@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'yoni-shewas.onrender.com'
+    "https://commerce-1-fgwq.onrender.com"
 ]
 
 
