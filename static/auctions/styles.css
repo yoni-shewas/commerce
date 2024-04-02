@@ -1,0 +1,86 @@
+
+.navbar {
+    background-color: #343a40; 
+}
+.navbar-brand {
+    color: #fff; 
+    font-weight: bold;
+}
+.nav-link {
+    color: #fff; 
+}
+.nav-link:hover {
+    color: #ccc; 
+}
+.badge {
+    background-color: #23415c; 
+    color: #fff;
+}
+
+.row{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.bg-gray {
+    background-color: #d3d2d2;
+}
+
+.category-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.category-item {
+    width: 300px;
+    height: 350px;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+.category-item:hover {
+    transform: scale(1.05);
+}
+.category-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.image-container {
+    width: auto;
+    max-height: 200px; /* Set maximum height for the image container */
+    overflow: hidden;
+}
+
+.card-img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block; /* Ensure the image is treated as a block-level element */
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.content {
+    min-height: calc(100vh - 56px); /* Adjust 56px to the height of your navbar */
+    /* This ensures that there's always at least 100% viewport height minus the height of the navbar */
+    /* If you have a sticky or fixed navbar, you might need to adjust this value */
+    padding-bottom: 60px; /* Adjust this value to the height of your footer */
+}
+
+footer {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+}
+
