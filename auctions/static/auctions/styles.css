@@ -64,23 +64,48 @@
     max-width: 100%;
     display: block; /* Ensure the image is treated as a block-level element */
 }
-
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
 }
 
-.content {
-    min-height: calc(100vh - 56px); /* Adjust 56px to the height of your navbar */
-    /* This ensures that there's always at least 100% viewport height minus the height of the navbar */
-    /* If you have a sticky or fixed navbar, you might need to adjust this value */
-    padding-bottom: 60px; /* Adjust this value to the height of your footer */
+.container {
+    min-height: calc(100vh - 60px); /* Adjust the height according to your footer's height */
+    padding-bottom: 80px; /* Adjust the padding-bottom to give space for the footer */
+    box-sizing: border-box;
 }
 
 footer {
     width: 100%;
+    height: 60px; /* Fixed height of the footer */
+    background-color: #343a40; /* Example background color */
+    color: white; /* Example text color */
     position: fixed;
     bottom: 0;
+    left: 0;
+    text-align: center;
+    padding-top: 20px; /* Example padding for content alignment */
+    box-sizing: border-box;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #343a40;
+}
+
+.navbar {
+    flex-shrink: 0; /* Prevent navbar from shrinking */
+}
+
+.container {
+    flex-grow: 1; /* Allow container to grow */
+    min-height: calc(100vh - 160px); /* Minimum height, adjust according to navbar and footer height */
+}
+
+footer {
+    flex-shrink: 0; /* Prevent footer from shrinking */
+}
