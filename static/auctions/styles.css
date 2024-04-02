@@ -1,9 +1,0 @@
-body {
-    padding: 3em;
-    background-color: black;
-}
-
-.row{
-    display: flex;
-    flex-wrap: wrap;
-}

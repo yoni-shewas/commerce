@@ -20,6 +20,9 @@ urlpatterns = [
     path('category/<str:category>/', views.watchCategory, name='category'),
     path('category/', views.watchCategory, name='category'),
 
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
 
 handler404 = 'auctions.views.error_404'

@@ -28,7 +28,7 @@ DJANGO_SETTINGS_MODULE = 'auctions.settings'
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -158,7 +158,8 @@ STATICFILES_FINDERS = [
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
-STATIC_ROOT = 'C:/Users/PC/Desktop/S-L/Python/commerce/auctions/static'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 DATABASES = {

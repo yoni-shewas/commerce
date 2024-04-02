@@ -1,0 +1,3 @@
+static:
+  - url: /static
+    dir: auctions/static
