@@ -14,7 +14,7 @@
                 <div class="card custom-card">
                     <img src="{{ auction.imgLinks }}" class="card-img-top custom-card-img" alt="{{ auction.Title }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ auction.Title }}</h5>
+                        <h5 class="card-title"><a href="{% url 'listing' auction.id %}">{{ auction.Title }}</a></h5>
                         <p class="card-text">{{ auction.description }}</p>
                         <p class="card-text">Starting Bid: ${{ auction.startingBid }}</p>
                         <p class="card-text">Listed Date: {{ auction.formatted_datListed }}</p>
@@ -34,7 +34,7 @@
                 <div class="card custom-card">
                     <img src="{{ auction.imgLinks }}" class="card-img-top custom-card-img" alt="{{ auction.Title }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ auction.Title }}</h5>
+                        <h5 class="card-title"><a href="{% url 'listing' auction.id %}">{{ auction.Title }}</a></h5>
                         <p class="card-text">{{ auction.description }}</p>
                         <p class="card-text">Final Bid: ${{ auction.bids.last.bid }}</p>
                         <p class="card-text">Sold Date: {{ auction.formatted_datListed }}</p>
@@ -54,7 +54,7 @@
                 <div class="card custom-card">
                     <img src="{{ auction.imgLinks }}" class="card-img-top custom-card-img" alt="{{ auction.Title }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ auction.Title }}</h5>
+                        <h5 class="card-title"><a href="{% url 'listing' auction.id %}">{{ auction.Title }}</a></h5>
                         <p class="card-text">{{ auction.description }}</p>
                         <p class="card-text">Current Highest Bid: ${{ auction.bids.last.bid }}</p>
                         <p class="card-text">Bidding End Date: {{ auction.formatted_datListed }}</p>
@@ -76,7 +76,7 @@
                         <img src="{{ auction.imgLinks }}" class="card-img-top custom-card-img" alt="{{ auction.Title }}">
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">{{ auction.Title }}</h5>
+                        <h5 class="card-title"><a href="{% url 'listing' auction.id %}">{{ auction.Title }}</a></h5>
                         <p class="card-text">{{ auction.description }}</p>
                         <p class="card-text">Winning Bid: ${{ auction.bids.last.bid }}</p>
                         <p class="card-text">Won Date: {{ auction.formatted_datListed }}</p>

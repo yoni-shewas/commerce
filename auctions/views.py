@@ -281,9 +281,10 @@ def bidding(request, id):
 
 @login_required
 def add_watchlist(request, id):
-    listing = get_object_or_404(AuctionListing, id=id)
+    listing = get_object_or_404(
+        AuctionListing, id=id, active=True).exclude(user=request.user)
 
-    if request.method == "POST":
+    if request.method == "POST" and listing:
         try:
             # Use get() to directly retrieve the WatchListing object
             Watchliste = WatchListing.objects.get(
@@ -387,10 +388,10 @@ def user_panel(request):
 
     # Get auctions currently being bid by the user
     bidding = AuctionListing.objects.filter(
-        active=False, id__in=all_distinct_bids).all()
+        active=True, id__in=all_distinct_bids).all()
 
     # Get auctions won by the user
-    for auction in AuctionListing.objects.filter(active=True, id__in=all_distinct_bids).all():
+    for auction in AuctionListing.objects.filter(active=False, id__in=all_distinct_bids).all():
         highest_bid = Bids.objects.filter(
             listing=auction.id).order_by('-bid').first()
 

@@ -9,7 +9,7 @@
                     <img class="img-fluid" style="max-width: 100%; height: auto;" src="{{ content.listing.imgLinks }}" alt="auction item">
                 </div>
                 <div class="col-md-8 p-3 flex-grow-1">
-                    <h3 class="m-1 p-0"> <a href="{% url 'listing' content.listing.id %}"> {{ content.Title }}   </a></h3>
+                    <h3 class="m-1 p-0"> <a href="{% url 'listing' content.listing.id %}"> {{ content.listing.Title }}   </a></h3>
                     <p class="m-1 p-0"><strong>Price:</strong> ${{ content.listing.startingBid }}</p>
                     <p class="m-1 p-0">{{ content.listing.description }}</p>
                     <p class="m-1 p-0 text-secondary font-weight-light">Created {{ content.listing.formatted_datListed }}</p>
