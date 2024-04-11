@@ -1,0 +1,92 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<div class="container mt-5">
+    <h1 class="mb-4">User Panel</h1>
+
+    <!-- Auctions currently being sold -->
+    <div class="mb-5">
+        <h2>Auctions Currently Being Sold</h2>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for auction in selling %}
+            <div class="col">
+                <div class="card">
+                    <img src="{{ auction.imgLinks }}" class="card-img-top" alt="{{ auction.Title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ auction.Title }}</h5>
+                        <p class="card-text">{{ auction.description }}</p>
+                        <p class="card-text">Starting Bid: ${{ auction.startingBid }}</p>
+                        <p class="card-text">Listed Date: {{ auction.formatted_datListed }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Sold Auctions -->
+    <div class="mb-5">
+        <h2>Sold Auctions</h2>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for auction in sold %}
+            <div class="col">
+                <div class="card">
+                    <img src="{{ auction.imgLinks }}" class="card-img-top" alt="{{ auction.Title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ auction.Title }}</h5>
+                        <p class="card-text">{{ auction.description }}</p>
+                        <p class="card-text">Final Bid: ${{ auction.bids.last.bid }}</p>
+                        <p class="card-text">Sold Date: {{ auction.formatted_datListed }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Auctions currently being bid -->
+    <div class="mb-5">
+        <h2>Auctions Currently Being Bid</h2>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for auction in bidding %}
+            <div class="col">
+                <div class="card">
+                    <img src="{{ auction.imgLinks }}" class="card-img-top" alt="{{ auction.Title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ auction.Title }}</h5>
+                        <p class="card-text">{{ auction.description }}</p>
+                        <p class="card-text">Current Highest Bid: ${{ auction.bids.last.bid }}</p>
+                        <p class="card-text">Bidding End Date: {{ auction.formatted_datListed }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Won Auctions -->
+    <div class="mb-5">
+        <h2>Won Auctions</h2>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for auction in won %}
+            <div class="col">
+                <div class="card" style="max-width: 350px;">
+                    <img src="{{ auction.imgLinks }}" class="card-img-top" alt="{{ auction.Title }}" height="200">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ auction.Title }}</h5>
+                        <p class="card-text">{{ auction.description }}</p>
+                        <p class="card-text">Winning Bid: ${{ auction.bids.last.bid }}</p>
+                        <p class="card-text">Won Date: {{ auction.formatted_datListed }}</p>
+                    </div>
+                </div>                
+            </div>
+            {% endfor %}
+            {%if not won %}
+            <p> no auctions won yet</p>
+            {%endif%}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

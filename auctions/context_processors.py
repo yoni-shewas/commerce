@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from .models import AuctionListing, Bids, WatchListing, bidWinner, comments
+from .models import WatchListing
 
 
 def custom_context(request):

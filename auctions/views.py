@@ -364,5 +364,46 @@ def watchCategory(request, category=None):
         })
 
 
+@login_required
+def user_panel(request):
+    """User Panel view: shows all auctions that user:
+        * is currently selling
+        * sold
+        * is currently bidding
+        * won
+    """
+    # Helpers
+    all_distinct_bids = Bids.objects.filter(
+        user=request.user.id).values_list("listing", flat=True).distinct()
+    won = []
+
+    # Get auctions currently being sold by the user
+    selling = AuctionListing.objects.filter(
+        active=False, user=request.user.id).order_by("-datListed").all()
+
+    # Get auction sold by the user
+    sold = AuctionListing.objects.filter(
+        active=True, user=request.user.id).order_by("-datListed").all()
+
+    # Get auctions currently being bid by the user
+    bidding = AuctionListing.objects.filter(
+        active=False, id__in=all_distinct_bids).all()
+
+    # Get auctions won by the user
+    for auction in AuctionListing.objects.filter(active=True, id__in=all_distinct_bids).all():
+        highest_bid = Bids.objects.filter(
+            listing=auction.id).order_by('-bid').first()
+
+        if highest_bid.user.id == request.user.id:
+            won.append(auction)
+
+    return render(request, "auctions/user_panel.html", {
+        "selling": selling,
+        "sold": sold,
+        "bidding": bidding,
+        "won": won
+    })
+
+
 def error_404(request, exception):
     return render(request, '404.html', status=404)

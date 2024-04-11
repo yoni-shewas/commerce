@@ -5,6 +5,7 @@ from django.views.static import serve
 
 from . import views
 
+
 urlpatterns = [
     path("", views.index, name="index"),
     path("login", views.login_view, name="login"),
@@ -20,6 +21,7 @@ urlpatterns = [
     path('category/', views.watchCategory, name='categories'),
     path('category/<str:category>/', views.watchCategory, name='category'),
     path('category/', views.watchCategory, name='category'),
+    path('userPanel/', views.user_panel, name='user_panel'),
     re_path(r'^media/(?P<path>.*)$', serve,
             {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/(?P<path>.*)$', serve,

@@ -2,6 +2,7 @@
 from pickle import FALSE
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -29,7 +30,7 @@ class AuctionListing(models.Model):
         User, on_delete=models.CASCADE, related_name="auction_listings")
     category = models.CharField(
         max_length=100, choices=catagories, null=True, default='Home & Garden')
-    datListed = models.DateTimeField(auto_now_add=True)
+    datListed = models.DateTimeField(default=timezone.now)
 
     def formatted_datListed(self):
         return self.datListed.strftime('%B %d, %Y %I:%M %p')
@@ -63,7 +64,7 @@ class bidWinner(models.Model):
         AuctionListing, on_delete=models.CASCADE,
         related_name="bidWinner", default=None)
     winning_bid = models.DecimalField(max_digits=10, decimal_places=2)
-    date_won = models.DateTimeField(auto_now_add=True)
+    date_won = models.DateTimeField(default=timezone.now)
 
 
 class comments(models.Model):
@@ -74,4 +75,4 @@ class comments(models.Model):
     listing = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE,
         related_name="comments", default=None)
-    datListed = models.DateTimeField(auto_now_add=True)
+    datListed = models.DateTimeField(default=timezone.now)
