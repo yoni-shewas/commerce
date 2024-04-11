@@ -379,11 +379,11 @@ def user_panel(request):
 
     # Get auctions currently being sold by the user
     selling = AuctionListing.objects.filter(
-        active=False, user=request.user.id).order_by("-datListed").all()
+        active=True, user=request.user.id).order_by("-datListed").all()
 
     # Get auction sold by the user
     sold = AuctionListing.objects.filter(
-        active=True, user=request.user.id).order_by("-datListed").all()
+        active=False, user=request.user.id).order_by("-datListed").all()
 
     # Get auctions currently being bid by the user
     bidding = AuctionListing.objects.filter(

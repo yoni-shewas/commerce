@@ -11,8 +11,8 @@
         <div class="row row-cols-1 row-cols-md-2 g-4">
             {% for auction in selling %}
             <div class="col">
-                <div class="card">
-                    <img src="{{ auction.imgLinks }}" class="card-img-top" alt="{{ auction.Title }}">
+                <div class="card custom-card">
+                    <img src="{{ auction.imgLinks }}" class="card-img-top custom-card-img" alt="{{ auction.Title }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ auction.Title }}</h5>
                         <p class="card-text">{{ auction.description }}</p>
@@ -31,8 +31,8 @@
         <div class="row row-cols-1 row-cols-md-2 g-4">
             {% for auction in sold %}
             <div class="col">
-                <div class="card">
-                    <img src="{{ auction.imgLinks }}" class="card-img-top" alt="{{ auction.Title }}">
+                <div class="card custom-card">
+                    <img src="{{ auction.imgLinks }}" class="card-img-top custom-card-img" alt="{{ auction.Title }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ auction.Title }}</h5>
                         <p class="card-text">{{ auction.description }}</p>
@@ -51,8 +51,8 @@
         <div class="row row-cols-1 row-cols-md-2 g-4">
             {% for auction in bidding %}
             <div class="col">
-                <div class="card">
-                    <img src="{{ auction.imgLinks }}" class="card-img-top" alt="{{ auction.Title }}">
+                <div class="card custom-card">
+                    <img src="{{ auction.imgLinks }}" class="card-img-top custom-card-img" alt="{{ auction.Title }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ auction.Title }}</h5>
                         <p class="card-text">{{ auction.description }}</p>
@@ -71,8 +71,10 @@
         <div class="row row-cols-1 row-cols-md-2 g-4">
             {% for auction in won %}
             <div class="col">
-                <div class="card" style="max-width: 350px;">
-                    <img src="{{ auction.imgLinks }}" class="card-img-top" alt="{{ auction.Title }}" height="200">
+                <div class="card custom-card" style="width: 100%;">
+                    <div class="ratio ratio-4x3">
+                        <img src="{{ auction.imgLinks }}" class="card-img-top custom-card-img" alt="{{ auction.Title }}">
+                    </div>
                     <div class="card-body">
                         <h5 class="card-title">{{ auction.Title }}</h5>
                         <p class="card-text">{{ auction.description }}</p>

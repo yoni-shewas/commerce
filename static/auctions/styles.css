@@ -94,7 +94,6 @@ body {
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
-    background-color: #343a40;
 }
 
 .navbar {
@@ -108,4 +107,21 @@ body {
 
 footer {
     flex-shrink: 0; /* Prevent footer from shrinking */
+}
+
+
+.custom-card {
+    width: 100%;
+    height: 100%;
+}
+
+.custom-card-img {
+    width: 100%;
+    height: 22em; /* Adjust as needed */
+    object-fit: cover; /* Ensure the image covers the entire space */
+}
+
+.custom-card .card-body {
+    height: calc(100% - 200px); /* Adjust to account for the image height */
+    overflow: auto; /* Add scroll if content exceeds the height */
 }
